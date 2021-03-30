@@ -1,0 +1,203 @@
+<!doctype html>
+<html class="no-js" lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="js/rubius-stocks.js"></script>
+  </head>
+  
+  <style>
+    html,
+    body {
+    	font-family: 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
+    	background: #f9fafb;
+    	-webkit-font-smoothing: antialiased;
+    	-moz-osx-font-smoothing: grayscale;
+    }
+    
+    .green {
+      color: rgba(132, 189, 0, 1.0);
+    }
+    
+    .red {
+      color: rgba(196, 33, 45, 1.0);
+    }
+    
+    .rubius-stock-price {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .rubius-stock-price_ins {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+    }
+    
+    .rubius-stock-price_ticker {
+      font-size: 28px;
+      display: block;
+    }
+    
+    .rubius-stock-price_price {
+      font-size: 21px;
+      margin-right: 10px;
+    }
+    
+    .stock-chart-container {
+      display: flex;
+      justify-content: center;
+    }
+    
+    .stock-chart_ins {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+    }
+    
+    .three-line-legend {
+    	width: 96px;
+    	height: 70px;
+    	position: absolute;
+    	padding: 8px;
+    	font-size: 12px;
+    	color: '#199fbc';
+    	background-color: rgba(255, 255, 255, 0.23);
+    	text-align: left;
+    	z-index: 1000;
+    	pointer-events: none;
+    }
+    
+    .floating-tooltip-2 {
+    	width: 115px;
+    	height: 95px;
+    	position: absolute;
+    	display: none;
+    	padding: 8px;
+    	box-sizing: border-box;
+    	font-size: 12px;
+    	color: #c4212d;
+    	background-color: rgba(255, 255, 255, 1);
+    	text-align: left;
+    	z-index: 1000;
+    	top: 12px;
+    	left: 12px;
+    	pointer-events: none;
+    	border: 1px solid rgba(0, 150, 136, 1);
+    	border-radius: 2px;
+    }
+    
+    .switcher {
+    	display: flex;
+    	align-items: center;
+    	height: 30px;
+    	margin-top: 8px;
+    	color: #2196F3;
+    }
+    
+    .switcher-item {
+    	cursor: pointer;
+    	text-decoration: none;
+    	display: inline-block;
+    	padding: 6px 8px;
+    	font-size: 14px;
+    	color: #262b3e;
+    	background-color: transparent;
+    	margin-right: 8px;
+    	border: none;
+    	border-radius: 4px;
+    	outline: none;
+    }
+    
+    .switcher-item:hover {
+    	background-color: #f2f3f5;
+    }
+    
+    .switcher-active-item {
+    	text-decoration: none;
+    	cursor: default;
+    	color: #262b3e;
+    }
+    
+    .switcher-active-item,
+    .switcher-active-item:hover {
+    	background-color: #e1eff9;
+    }
+    
+    .rubius-stock-details_row {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      margin: 20px auto 0;
+      display: flex;
+    }
+    
+    .rubius-stock-details_col {
+      padding: .75rem;
+    }
+    
+    .rubius-stock-details_col-header {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      color: #6b6b6b;
+    }
+    
+    .rubius-stock-details_col-value {
+      display: block;
+      color: #393a3b;
+      margin: 10px 0 20px;
+    }
+  </style>
+
+  <body>
+    <div class="rubius-stock-price">
+      <div class="rubius-stock-price_ins">
+        <span class="rubius-stock-price_ticker">RUBY</span>
+        <span class="rubius-stock-price_price">$24.41</span><span class="rubius-stock-price_change red">-0.21 (-0.85%)</span>
+      </div>
+    </div>
+    <div id="rubius-stock-chart" class="stock-chart-container"></div>
+    <div class="rubius-stock-details">
+      <div class="rubius-stock-details_row">
+        <div class="rubius-stock-details_col">
+          <span class="rubius-stock-details_col-header">Open</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_open">25.36</span>
+          <span class="rubius-stock-details_col-header rubius-stock-details_col-value_prev-open">Previous Open</span>
+          <span class="rubius-stock-details_col-value">30.50</span>
+        </div>
+        <div class="rubius-stock-details_col">
+          <span class="rubius-stock-details_col-header">High</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_high">26.28</span>
+          <span class="rubius-stock-details_col-header">Previous High</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_prev-high">31.20</span>
+        </div>
+        <div class="rubius-stock-details_col">
+          <span class="rubius-stock-details_col-header">Low</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_low">24.10</span>
+          <span class="rubius-stock-details_col-header">Previous Low</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_prev-low">23.41</span>
+        </div>
+        <div class="rubius-stock-details_col">
+          <span class="rubius-stock-details_col-header">Close</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_close">-</span>
+          <span class="rubius-stock-details_col-header">Previous Close</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_prev-close">24.62</span>
+        </div>
+        <div class="rubius-stock-details_col">
+          <span class="rubius-stock-details_col-header">Volume</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_volume">99,313</span>
+          <span class="rubius-stock-details_col-header">Previous Volume</span>
+          <span class="rubius-stock-details_col-value rubius-stock-details_col-value_prev-volume">1,851,562</span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polygon Test</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="api-key.json"></script>
+</head>
+<body>
+    <input type="radio" id="1_d" name="time-frame" value="1_d" checked>
+    <label for="1_d">1 day</label><br>
+    <input type="radio" id="5_d" name="time-frame" value="5_d">
+    <label for="5_d">5 days</label><br>
+    <input type="radio" id="1_m" name="time-frame" value="1_m">
+    <label for="1_m">1 month</label>
+
+    <pre>
+        <div id="results">
+
+        </div>
+    </pre>
+
+    <script>
+    //    var jsonData = JSON.parse(data);
+    //    var apiKey = jsonData[0].key;
+
+    //    $.ajax({
+    //         type: "GET",
+    //         url: "https://api.polygon.io/v1/meta/symbols/RUBY/company?&apiKey="+apiKey
+    //     })
+    //     .done(function(data) {
+    //         var results;
+    //         // array.forEach(element => {
+                
+    //         // });
+    //         console.log(data);
+    //         // $(dataJson).appendTo($('#results'));
+    //     });
+        $.ajax({
+        url: 'http://api.marketstack.com/v1/intraday',
+        data: {
+            access_key: 'a01536ac509d7bb1d2a34b6ba5f29451',
+            symbols: 'APPL',
+            interval: '1min'
+        },
+        dataType: 'json',
+        success: function(apiResponse) {
+            console.log(apiResponse['data']);
+            // if (Array.isArray(apiResponse['data'])) {
+            // apiResponse['data'].forEach(stockData => {
+            //         console.log(`Ticker ${stockData['symbol']}`,
+            //             `has a day high of ${stockData['high']},
+            //             `on ${stockData['date']}`);
+            // });
+            // }
+        }
+        });
+    </script>
+</body>
+</html>
