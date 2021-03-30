@@ -2,8 +2,8 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
   //   API Calls
   // Get snapshot and prepare data
-  var jsonData = JSON.parse(data);
-  var apiKey = jsonData[0].key;
+//   var apiKey = jsonData[0].key;
+  var apiKey = "S_Z5wqYZOglnJCXkswa3azp5Wj9YRNFF";
   getSnapshot(apiKey);
   let dayData = getTrade(apiKey, 'day');
   let weekData = getTrade(apiKey, 'week');
@@ -81,11 +81,19 @@ window.addEventListener('DOMContentLoaded', (event) => {
       },
     },
   	timeScale: {
-  		borderVisible: false,
-  		tickMarkFormatter: (time) => {
-  			const date = new Date(time.year, time.month, time.day);
-  			return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
-  		},
+		rightOffset: 50,
+		fixLeftEdge: true,
+		lockVisibleTimeRangeOnResize: true,
+		rightBarStaysOnScroll: true,
+		borderVisible: true,
+		borderColor: '#fff000',
+		visible: true,
+		timeVisible: true,
+		secondsVisible: true,
+  		// tickMarkFormatter: (time) => {
+  		// 	const date = new Date(time.year, time.month, time.day);
+  		// 	return date.getFullYear() + '/' + (date.getMonth() + 1) + '/' + date.getDate();
+  		// },
   	},
   	grid: {
   		horzLines: {
@@ -230,6 +238,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 
 
+
   //Get SnapShot of a ticker (RUBY)
 	function getSnapshot (apiKey) {
 		fetch('https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/RUBY?&apiKey='+apiKey)
@@ -279,35 +288,39 @@ window.addEventListener('DOMContentLoaded', (event) => {
 	// Get historical data based on chart type (day, week, month, year)
 	function getTrade (apiKey, chartType) {
 		let dayDataResult = [];
-		let timeSpan;
-		if(chartType == 'year'){
-			timeSpan = 3;
-		}else{
-			timeSpan = 360;
+		let timeSpan ,day_to, day_from;
+		if(chartType == 'day'){
+			multiplier = 5;
+			timeSpan = 'minute';
+			day_from = moment().subtract(5, 'days').format("YYYY-MM-DD");
+		}else if(chartType == 'week'){
+			multiplier = 30;
+			timeSpan = 'minute';
+			day_from = moment().subtract(4, 'weeks').format("YYYY-MM-DD");
+		}else if(chartType == 'month'){
+			multiplier = 1;
+			timeSpan = 'day';
+			day_from = moment().subtract(6, 'months').format("YYYY-MM-DD");
+		}else if(chartType == 'year'){
+			multiplier = 1;
+			timeSpan = 'day';
+			day_from = moment().subtract(2, 'years').format("YYYY-MM-DD");
 		}
-		let day_to = moment().format("YYYY-MM-DD");
-		let day_from = moment().subtract(timeSpan, chartType+'s').format("YYYY-MM-DD");
-		return fetch('https://api.polygon.io/v2/aggs/ticker/RUBY/range/1/'+chartType+'/'+day_from+'/'+day_to+'?unadjusted=true&sort=asc&limit=50000&apiKey='+apiKey)
+		day_to = moment().format("YYYY-MM-DD");
+		return fetch('https://api.polygon.io/v2/aggs/ticker/RUBY/range/'+multiplier+'/'+timeSpan+'/'+day_from+'/'+day_to+'?unadjusted=true&sort=asc&limit=50000&apiKey='+apiKey)
 		.then(
 			response => response.json()
 		).then(
 			data => {
 				let results = data.results;
-
 				results.forEach(result => {
 					dayDataResult.push(
-						{ time: moment.unix(result.t/1000).format("YYYY-MM-DD"), value: result.c }
+						{ time: result.t/1000, value: result.c }
 					);
 				});
 				return dayDataResult;
-				// console.log(dayDataResult);
 			}
 		)
 		
 	}
 });
-
-
-
-
-
