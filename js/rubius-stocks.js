@@ -696,14 +696,29 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 
 
+  
 	//   API Calls
+	
+	var jsonData = JSON.parse(data);
+	var apiKey = jsonData[0].key;
+
 	const getSnapshot = async () => {
-		const response = await fetch('https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/RUBY?&apiKey=S_Z5wqYZOglnJCXkswa3azp5Wj9YRNFF');
-		const myJson = await response.json(); //extract JSON from the http response
-		// do something with myJson
-		return myJson;
+		const response = await fetch('https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers/RUBY?&apiKey='+apiKey);
+		const myJson = await response.json(); 
+		let tickerSnapshot = myJson.ticker;
+		console.log(tickerSnapshot);
+
+		// manipulate the DOM
+		document.querySelector('.rubius-stock-price_ticker').innerHTML = tickerSnapshot.ticker;
+		document.querySelector('.rubius-stock-price_price').innerHTML = "$"+tickerSnapshot.lastQuote['P'];
+		document.querySelector('.rubius-stock-price_change').innerHTML = tickerSnapshot.todaysChange;
+		document.querySelector('.rubius-stock-price_change').innerHTML = tickerSnapshot.todaysChange + " " + "(" + tickerSnapshot.todaysChangePerc  + ")";
+		if(tickerSnapshot.todaysChange >= 0){
+			document.querySelector('.rubius-stock-price_change').classList.add('green');
+		}else{
+			document.querySelector('.rubius-stock-price_change').classList.add('red');
+		}
 	}
 	
-	let snapShot = getSnapshot();
-	console.log(snapShot);
+	getSnapshot();
 });
